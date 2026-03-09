@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIMEBOX | MISSION LOGIN</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@300;400;600;800&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(199, 89%, 48%, 0.1) 0, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(162, 72%, 48%, 0.1) 0, transparent 50%);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 3rem 2rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .login-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+        .login-header h1 span {
+            color: var(--accent-primary);
+        }
+        .login-header p {
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+        .input-wrapper {
+            position: relative;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .input-wrapper:focus-within {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+        }
+        .input-wrapper input {
+            padding: 0.75rem 1rem;
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            color: var(--text-main);
+        }
+        .input-wrapper.with-btn {
+            display: flex;
+        }
+        .input-wrapper.with-btn input {
+            flex-grow: 1;
+        }
+        .btn-inline {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 0 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn-inline:disabled {
+            background: var(--text-dim);
+            cursor: not-allowed;
+        }
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            color: var(--text-dim);
+        }
+        .remember-me input {
+            width: auto;
+            min-height: auto;
+            cursor: pointer;
+        }
+        .toggle-form {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .error-msg, .success-msg {
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            text-align: center;
+            display: none;
+        }
+        .error-msg {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        .success-msg {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-success);
+        }
+        .btn-login {
+            width: 100%;
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        #signup-form {
+            display: none;
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <div class="login-card glass-card">
+        <div class="login-header">
+            <h1>TIME<span>BOX</span></h1>
+            <p id="header-desc">플래너 로그인</p>
+        </div>
+        
+        <div id="error-msg" class="error-msg"></div>
+        <div id="success-msg" class="success-msg"></div>
+
+        <form id="login-form">
+            <div class="input-group">
+                <label for="username">인증 ID</label>
+                <div class="input-wrapper">
+                    <input type="text" id="username" placeholder="아이디를 입력하세요" required>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">액세스 코드</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" placeholder="비밀번호를 입력하세요" required>
+                </div>
+            </div>
+
+            <div class="login-options">
+                <label class="remember-me">
+                    <input type="checkbox" id="remember">
+                    로그인 정보 저장
+                </label>
+                <a href="#" class="toggle-form" onclick="toggleForm('signup')">회원가입하기</a>
+            </div>
+
+            <button type="submit" class="btn-primary btn-login">로그인</button>
+        </form>
+
+        <form id="signup-form">
+            <div class="input-group">
+                <label for="reg-username">새 인증 ID</label>
+                <div class="input-wrapper with-btn">
+                    <input type="text" id="reg-username" placeholder="새 아이디" required>
+                    <button type="button" class="btn-inline" id="btn-check-id">중복 확인</button>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="reg-password">비밀번호</label>
+                <div class="input-wrapper">
+                    <input type="password" id="reg-password" placeholder="비밀번호" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="reg-password-confirm">비밀번호 확인</label>
+                <div class="input-wrapper">
+                    <input type="password" id="reg-password-confirm" placeholder="비밀번호 재입력" required>
+                </div>
+            </div>
+
+            <div class="login-options">
+                <a href="#" class="toggle-form" onclick="toggleForm('login')">이미 계정이 있나요? 로그인</a>
+            </div>
+
+            <button type="submit" class="btn-primary btn-login">가입하기</button>
+        </form>
+    </div>
+
+    <script>
+        let isIdChecked = false;
+
+        function toggleForm(type) {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const headerDesc = document.getElementById('header-desc');
+            const errorDiv = document.getElementById('error-msg');
+            const successDiv = document.getElementById('success-msg');
+
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            if (type === 'signup') {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                headerDesc.textContent = '회원가입';
+            } else {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                headerDesc.textContent = '플래너 로그인';
+            }
+        }
+
+        // Login handle
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            const errorDiv = document.getElementById('error-msg');
+            const submitBtn = e.target.querySelector('button');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '인증 중...';
+            errorDiv.style.display = 'none';
+
+            try {
+                const res = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, remember })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    if (remember) {
+                        localStorage.setItem('timebox_username', username);
+                    } else {
+                        localStorage.removeItem('timebox_username');
+                    }
+                    window.location.href = '/';
+                } else {
+                    errorDiv.textContent = data.error;
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                errorDiv.textContent = '서버 통신 오류가 발생했습니다.';
+                errorDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '로그인';
+            }
+        });
+
+        // Signup ID Check
+        document.getElementById('btn-check-id').addEventListener('click', async () => {
+            const username = document.getElementById('reg-username').value;
+            const errorDiv = document.getElementById('error-msg');
+            const successDiv = document.getElementById('success-msg');
+
+            if (!username) {
+                alert('아이디를 입력해주세요.');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/check_id', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    isIdChecked = true;
+                    errorDiv.style.display = 'none';
+                    successDiv.textContent = '사용 가능한 아이디입니다.';
+                    successDiv.style.display = 'block';
+                    document.getElementById('reg-username').readOnly = true;
+                    document.getElementById('btn-check-id').disabled = true;
+                } else {
+                    errorDiv.textContent = data.error;
+                    errorDiv.style.display = 'block';
+                    successDiv.style.display = 'none';
+                }
+            } catch (err) {
+                alert('통신 오류');
+            }
+        });
+
+        // Signup Submit
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const confirm = document.getElementById('reg-password-confirm').value;
+            const errorDiv = document.getElementById('error-msg');
+            const successDiv = document.getElementById('success-msg');
+            const submitBtn = e.target.querySelector('button');
+
+            if (!isIdChecked) {
+                errorDiv.textContent = '아이디 중복 확인을 먼저 해주세요.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirm) {
+                errorDiv.textContent = '비밀번호가 일치하지 않습니다.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '프로필 생성 중...';
+
+            try {
+                const res = await fetch('/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('회원가입이 완료되었습니다! 로그인해주세요.');
+                    toggleForm('login');
+                    document.getElementById('username').value = username;
+                } else {
+                    errorDiv.textContent = data.error;
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                errorDiv.textContent = '가입 중 오류가 발생했습니다.';
+                errorDiv.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '가입하기';
+            }
+        });
+
+        // Autofill username if remembered
+        window.onload = () => {
+            const savedUser = localStorage.getItem('timebox_username');
+            if (savedUser) {
+                document.getElementById('username').value = savedUser;
+                document.getElementById('remember').checked = true;
+            }
+        };
+    </script>
+</body>
+</html>
