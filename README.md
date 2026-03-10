@@ -21,7 +21,8 @@
    ```
 
 3. **구글 API 설정**:
-   - `credentials.json` 파일을 루트 디렉토리에 배치해야 합니다. (보안상 .gitignore에 포함됨)
+   - **로컬 실행 시**: `credentials.json` 파일을 루트 디렉토리에 배치합니다.
+   - **Vercel 배포 시**: Vercel 프로젝트 설정의 **Environment Variables**에 `GOOGLE_CREDENTIALS_JSON` 항목을 추가하고, `credentials.json` 파일의 전체 내용(JSON 형식)을 값으로 입력합니다.
 
 4. **서버 실행**:
    ```bash

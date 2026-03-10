@@ -2,7 +2,8 @@ const state = {
     currentDate: new Date(),
     checklistData: [],
     isLoading: false, // Prevent saving during data load
-    isLoaded: false   // Ensure we have loaded data before allowing a save
+    isLoaded: false,  // Ensure we have loaded data before allowing a save
+    isSaving: false   // Prevent loading during data save
 };
 
 // Global UI Elements
@@ -43,7 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Real-time Sync: Refresh data every 10 seconds if not currently editing
     setInterval(() => {
-        if (!state.isLoading && document.visibilityState === 'visible') {
+        const isTyping = document.activeElement && (
+            document.activeElement.tagName === 'INPUT' ||
+            document.activeElement.tagName === 'SELECT'
+        );
+        const hasPendingSave = saveTimeout !== null || state.isSaving;
+
+        if (!state.isLoading && !hasPendingSave && !isTyping && document.visibilityState === 'visible') {
             loadFromSheet(true); // silent load
         }
     }, 10000);
@@ -87,7 +94,7 @@ function createBlock(container, label, ampm, id) {
     checkbox.onclick = () => {
         checkbox.classList.toggle('checked');
         row.classList.toggle('completed');
-        
+
         if (checkbox.classList.contains('checked')) {
             row.classList.add('completed');
         } else {
@@ -133,7 +140,7 @@ function clearUI() {
     state.checklistData = [];
     const braindumpList = document.getElementById('braindump-list');
     if (braindumpList) braindumpList.innerHTML = '';
-    
+
     const t1 = document.getElementById('top1');
     const t2 = document.getElementById('top2');
     const t3 = document.getElementById('top3');
@@ -151,7 +158,7 @@ function clearUI() {
         r.classList.remove('completed');
         r.style.removeProperty('--row-bg');
     });
-    
+
     updateTimelineDropdowns();
 }
 
@@ -178,7 +185,7 @@ function addNewItem(text = '', checked = false) {
     if (!taskText) return;
 
     // Duplicate check (case-insensitive)
-    const isDuplicate = state.checklistData.some(item => 
+    const isDuplicate = state.checklistData.some(item =>
         item.text.trim().toLowerCase() === taskText.toLowerCase()
     );
 
@@ -307,13 +314,17 @@ function updateTimelineDropdowns() {
 let saveTimeout = null;
 function saveToSheet() {
     if (state.isLoading || !state.isLoaded) return;
-    
+
     // Debounce: Wait 1 second after the last change before saving
     if (saveTimeout) clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(performSave, 1000);
+    saveTimeout = setTimeout(() => {
+        saveTimeout = null;
+        performSave();
+    }, 1000);
 }
 
 async function performSave() {
+    state.isSaving = true;
     if (badge) badge.textContent = '클라우드 전송 중...';
     if (indicator) indicator.className = 'status-indicator syncing';
     if (msg) msg.textContent = '데이터 동기화 중...';
@@ -362,6 +373,8 @@ async function performSave() {
         }
 
         if (msg) msg.textContent = errorMsg;
+    } finally {
+        state.isSaving = false;
     }
 }
 
@@ -384,7 +397,7 @@ function getTimeboxData() {
 async function loadFromSheet(silent = false) {
     if (state.isLoading) return;
     const requestedDate = getFormattedDate(state.currentDate);
-    
+
     try {
         state.isLoading = true;
         if (!silent) {

@@ -37,11 +37,21 @@ USER_SHEET_NAME = 'RDB_로그인'
 
 def get_sheet(sheet_name=WORKSHEET_NAME):
     try:
-        cred_path = resource_path('credentials.json')
-        if not os.path.exists(cred_path):
-            return None
         scopes = ['https://www.googleapis.com/auth/spreadsheets']
-        creds = Credentials.from_service_account_file(cred_path, scopes=scopes)
+        
+        # 1. Try Environment Variable (Vercel/Production)
+        env_creds = os.environ.get('GOOGLE_CREDENTIALS_JSON')
+        if env_creds:
+            creds_info = json.loads(env_creds)
+            creds = Credentials.from_service_account_info(creds_info, scopes=scopes)
+        else:
+            # 2. Try Local File (Local Dev)
+            cred_path = resource_path('credentials.json')
+            if not os.path.exists(cred_path):
+                print("Credential Error: Neither GOOGLE_CREDENTIALS_JSON env nor credentials.json file found.")
+                return None
+            creds = Credentials.from_service_account_file(cred_path, scopes=scopes)
+            
         client = gspread.authorize(creds)
         spreadsheet = client.open_by_key(SPREADSHEET_ID)
         
